@@ -1,0 +1,131 @@
+%YAML 1.2
+---
+name: MWEL
+file_extensions: [mwel]
+scope: source.mwel
+
+variables:
+  identifier: '[a-zA-Z][a-zA-Z0-9_]*'
+  arithmetic_operator: \+|-|\*|/|%
+  assignment_operator: '({{arithmetic_operator}})?='
+
+contexts:
+  main:
+    - include: directives
+    - include: variable
+    - include: replicator
+    - include: paradigm_component
+    - include: control_flow_action
+    - include: transition
+    - include: generic_component
+    - include: strings
+    - include: comments
+    - include: constants
+    - include: operators
+
+  directives:
+    - match: '^\s*((%)define)\s+({{identifier}})'
+      captures:
+        1: keyword.declaration.function.mwel storage.type.function.mwel
+        2: punctuation.definition.keyword.mwel
+        3: entity.name.function.mwel
+    - match: ^\s*((%)end)\b
+      captures:
+        1: keyword.declaration.function.mwel storage.type.function.mwel
+        2: punctuation.definition.keyword.mwel
+    - match: ^\s*((%)include)\b
+      captures:
+        1: keyword.control.import.mwel
+        2: punctuation.definition.keyword.mwel
+
+  variable:
+    - match: ^\s*(var)\b
+      scope: storage.type.mwel
+
+  replicator:
+    - match: ^\s*(list_replicator|range_replicator)\b
+      scope: keyword.control.mwel
+
+  paradigm_component:
+    - match: ^\s*(block|experiment|list|protocol|state|task|task_system|task_system_state|trial)\b
+      scope: keyword.control.mwel
+
+  control_flow_action:
+    - match: ^\s*(choose|else|if|if_else|otherwise|(when(?!\s*=))|while)\b
+      scope: keyword.control.conditional.mwel
+
+  transition:
+    - match: ^\s*(goto|yield)\b
+      scope: keyword.control.mwel
+
+  generic_component:
+    - match: '^\s*{{identifier}}(/{{identifier}})?\b(?!\s*{{assignment_operator}})'
+      scope: variable.function.mwel
+
+  strings:
+    - match: "'"
+      scope: punctuation.definition.string.begin.mwel
+      push:
+        - meta_scope: string.quoted.single.mwel
+        - match: \\.
+          scope: constant.character.escape.mwel
+        - match: "'"
+          scope: punctuation.definition.string.end.mwel
+          pop: true
+    - match: '"'
+      scope: punctuation.definition.string.begin.mwel
+      push:
+        - meta_scope: string.quoted.double.mwel
+        - match: \\.
+          scope: constant.character.escape.mwel
+        - match: '"'
+          scope: punctuation.definition.string.end.mwel
+          pop: true
+
+  comments:
+    - include: single_line_comment
+    - include: multi_line_comment
+
+  single_line_comment:
+    - match: //
+      scope: punctuation.definition.comment.mwel
+      push:
+        - meta_scope: comment.line.mwel
+        - match: \n
+          pop: true
+
+  multi_line_comment:
+    - match: \*/
+      scope: invalid.illegal.mwel
+    - match: /\*
+      scope: punctuation.definition.comment.mwel
+      push:
+        - meta_scope: comment.block.mwel
+        - match: \*/
+          pop: true
+        - include: multi_line_comment
+
+  constants:
+    - match: \b(?i:(true|false|YES|NO))\b
+      scope: constant.language.mwel
+    - match: \b(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))([eE][+-]?[0-9]+)?((?i:us|ms|s)\b)?
+      scope: constant.numeric.mwel
+
+  operators:
+    - match: '{{assignment_operator}}'
+      scope: keyword.operator.assignment.mwel
+    - match: '{{arithmetic_operator}}'
+      scope: keyword.operator.arithmetic.mwel
+    - match: ==|!=|<=|=<|#LE|<|#LT|>=|=>|#GE|>|#GT
+      scope: keyword.operator.mwel
+    - match: '&&|\|\||!|#AND|#OR'
+      scope: keyword.operator.logical.mwel
+    - match: \b(?i:and|or|not|us|ms|s)\b
+      scope: keyword.operator.word.mwel
+    - match: ((\()(bool|int|integer|float|double|string)(\)))
+      captures:
+        1: storage.type.mwel
+        2: punctuation.definition.keyword.mwel
+        3: punctuation.definition.keyword.mwel
+    - match: :|,|;
+      scope: punctuation.separator.mwel

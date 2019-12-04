@@ -1,0 +1,16 @@
+// SYNTAX TEST "Packages/MWEL/MWEL.sublime-syntax"
+
+// foo
+// ^^^ source.mwel comment.line
+// <- punctuation.definition.comment
+
+   var sstring = 'foo'
+// ^^^ source.mwel storage.type.mwel
+//               ^^^^^ source.mwel string.quoted.single
+
+var dstring = "bar//blah"
+//            ^^^^^^^^^^^ source.mwel string.quoted.double
+
+   if (1.5e-12) { }
+// ^^ source.mwel keyword.control
+//     ^^^^^^^ source.mwel constant.numeric.mwel
