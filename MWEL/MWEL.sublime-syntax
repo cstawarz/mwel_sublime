@@ -29,11 +29,7 @@ contexts:
         1: keyword.declaration.function.mwel storage.type.function.mwel
         2: punctuation.definition.keyword.mwel
         3: entity.name.function.mwel
-    - match: ^\s*((%)end)\b
-      captures:
-        1: keyword.declaration.function.mwel storage.type.function.mwel
-        2: punctuation.definition.keyword.mwel
-    - match: ^\s*((%)include)\b
+    - match: ^\s*((%)(else|end|ifdef|ifundef|include))\b
       captures:
         1: keyword.control.import.mwel
         2: punctuation.definition.keyword.mwel
